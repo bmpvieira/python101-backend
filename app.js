@@ -137,7 +137,7 @@ var base = {
 
 var presentations = [];
 app.get('/', function(req, res, next) {
-  var url = 'http://dl.dropbox.com/u/921476/python101/urls.txt';
+  var url = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1';
   request(url, function(err, resp, body){
     var lines = body.split('\n');
     presentations = [];
