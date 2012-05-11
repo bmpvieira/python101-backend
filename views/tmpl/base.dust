@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+  <title>{site_title}</title>
+  
+  <meta name="description" content="{description}">
+  <meta name="author" content="{autor}">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  {! CSS for Deck.js core and extensions !}
+  <link rel="stylesheet" href="pkg/deck.js/core/deck.core.css">
+  <link rel="stylesheet" href="pkg/deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" href="pkg/deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" href="pkg/deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" href="pkg/deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" href="pkg/deck.js/extensions/hash/deck.hash.css">
+  <link rel="stylesheet" href="pkg/deck.js/extensions/scale/deck.scale.css">
+  
+  {! CSS for Deck.js theme !}
+  <link rel="stylesheet" href="css/mnml.css">
+  
+  {! CSS for Deck.js transition !}
+  <link rel="stylesheet" href="pkg/deck.js/themes/transition/horizontal-slide.css">
+
+  {! CSS for CodeMirror2 core and theme !}
+  <link rel="stylesheet" href="pkg/codemirror2/lib/codemirror.css">
+  <link rel="stylesheet" href="pkg/codemirror2/theme/ambiance.css">
+  
+  {! CSS override !}
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="deck-container">
+
+  {! Begin slides !}
+  {+slides/}
+
+  {! Setup slides snippets !}
+  {! deck.navigation snippet !}
+  <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+  <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+
+  {! deck.status snippet !}
+  <p class="deck-status">
+    <span class="deck-status-current"></span>
+    /
+    <span class="deck-status-total"></span>
+  </p>
+
+  {! deck.goto snippet !}
+  <form action="." method="get" class="goto-form">
+    <label for="goto-slide">Go to slide:</label>
+    <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+    <datalist id="goto-datalist"></datalist>
+    <input type="submit" value="Go">
+  </form>
+
+  {! deck.hash snippet !}
+  <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+
+
+  {! Grab CDN jQuery, with a protocol relative URL; fall back to local if offline !}
+  <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="env/js/jquery-1.7.min.js"><\/script>')</script>
+
+  {! Load Javascript !}
+  {! load Deck.js core and extensions !}
+  <script src="pkg/deck.js/core/deck.core.js"></script>
+  <script src="pkg/deck.js/extensions/hash/deck.hash.js"></script>
+  <script src="pkg/deck.js/extensions/menu/deck.menu.js"></script>
+  <script src="pkg/deck.js/extensions/goto/deck.goto.js"></script>
+  <script src="pkg/deck.js/extensions/status/deck.status.js"></script>
+  <script src="pkg/deck.js/extensions/navigation/deck.navigation.js"></script>
+  <script src="pkg/deck.js/extensions/scale/deck.scale.js"></script>
+  <script src="pkg/deck.js/modernizr.custom.js"></script>
+
+  {! load CodeMirror2 core, modes and keymap !}
+  <script src="pkg/codemirror2/lib/codemirror.js"></script>
+  <script src="pkg/codemirror2/mode/javascript/javascript.js"></script>
+  <script src="pkg/codemirror2/mode/python/python.js"></script>
+  <script src="pkg/codemirror2/keymap/vim.js"></script>
+
+  {! load Skulpt core !}
+  <script src="pkg/skulpt/dist/skulpt.js"></script>
+
+  {! load Codemirror2 and Skulpt functions to generate editors !}
+  <script src="js/editor.js"></script>
+
+  {! Presentation init !}
+  <script>
+    {! initialize Deck.js !}
+    $(function() {
+      $.deck('.slide');
+    });
+
+    {! generate CodeMirror2 editors for each code textarea !}
+    $(window).load(function() {
+      $('.code').each(function(i, v) {
+        var editorid = 'editor' + i;
+        window[editorid] = geneditor(i);
+        window[editorid].idnum = i;
+        // Bug workaround: CodeMirror2's Python mode crashes with some first lines, so adding usual env line solves it, but this line's hash mark must also be escaped to avoid becoming header due to bug in markdown parser. Finaly, the escape slash must be removed because md parser doesn't do it.
+        var editor = window[editorid];
+        var value = editor.getValue().replace(/\\/g, "");
+        editor.setValue(value);
+        // Run code in editor to init ouput area
+        runit(editor);
+      });
+    });
+  </script>
+</body>
+</html>

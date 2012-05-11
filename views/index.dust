@@ -1,0 +1,13 @@
+{>"views/tmpl/base.dust"/}
+
+{<slides}
+
+<section class="slide" id="python101">
+  <h2>{title}</h2>
+  <h3>Presentations</h3>
+  {#presentations}
+  	<a href="{name}">{name}</a><br />
+  {/presentations}
+</section>
+
+{/slides}
