@@ -1,0 +1,9 @@
+[submodule "public/pkg/codemirror2"]
+	path = public/pkg/codemirror2
+	url = https://github.com/marijnh/CodeMirror2.git
+[submodule "public/pkg/deck.js"]
+	path = public/pkg/deck.js
+	url = https://github.com/imakewebthings/deck.js.git
+[submodule "public/pkg/skulpt"]
+	path = public/pkg/skulpt
+	url = https://github.com/bmpvieira/skulpt.git
