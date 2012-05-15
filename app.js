@@ -25,7 +25,7 @@ function authorize(username, password) {
 app.configure(function(){
     app.set('view engine', 'dust');
     app.set('views', __dirname + '/views');
-    app.use(express.favicon());
+    app.use(express.favicon(__dirname + '/public/favicon.ico'));
     app.use(express.logger('dev'));
     app.use(express.static(__dirname + '/public', {redirect: false}));
     app.use(express.bodyParser());
@@ -94,24 +94,26 @@ function mdfilter(chunk, context, bodies) {
   $ = cheerio.load(md(catdata));
   // Add Deck.js markup by using h1 to split and for slides id
   $('h1').each(function(i, v) {
-    var slideid = $(this).html().replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    var slideid = $(this).text().replace(/[^a-z0-9]/gi, '_').toLowerCase() + i;
     if(i === 0) {
       $(this).before('gtosection id="' + slideid + '" class="slide"lesserth');
     } else {
       $(this).before('gtcsectionlt \n gtosection id="' + slideid + '" class="slide"lesserth');
     }
-    $(this).replaceWith('<h2>' + $('h1').html() + '</h2>');
+    $(this).replaceWith('<h2>' + $(this).text() + '</h2>');
   });
   // Add CodeMirror2 markup by replacing where lang=python with textarea
   $('pre[lang="python"]').each(function(i, v) {
     $(this).parent().after('<pre id="codeout' + i + '" class="codeout"></pre>');
     $(this).parent().replaceWith('<textarea id="code' + i + '" class="code">'
-      + $(this).html()) 
+      + $(this).text()) 
       + '</textarea>';
   });
   // TODO: Find a way to avoid doing this regex by replacing directly with correct tags
   var output = $.html().replace(/gtosection/g,'<section').replace(/gtcsectionlt/g,'</section>').replace(/lesserth/g,'>')
     + '</section>';
+  // BUG: Cheerio has some decoding bugs
+  output = output.replace(/&amp;/g, '&');
   return chunk.write(output);
 };
 
@@ -151,7 +153,6 @@ app.get('/', function(req, res, next) {
       };
       presentations.push(presentation);
     };
-    console.log(presentations);
     base['presentations'] = presentations;
     res.render('index', base);
   });
@@ -163,9 +164,6 @@ app.get('/:presentation', function(req, res, next) {
       var url = presentations[i]['url']
     };
   };
-  //console.log(req.params.presentation)
-  //var url = function(req.params.presentation)
-  //var url = presentations[req.params.presentation];
   request(url, function(err, resp, body){
     base['slides'] = body;
     res.render('slides', base);

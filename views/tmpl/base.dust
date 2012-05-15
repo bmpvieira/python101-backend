@@ -12,7 +12,10 @@
   <meta name="description" content="{description}">
   <meta name="author" content="{autor}">
   <meta name="viewport" content="width=1024, user-scalable=no">
-
+  
+  {! CSS for Google Webfont Droid Sans !}
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+  
   {! CSS for Deck.js core and extensions !}
   <link rel="stylesheet" href="pkg/deck.js/core/deck.core.css">
   <link rel="stylesheet" href="pkg/deck.js/extensions/goto/deck.goto.css">
@@ -23,7 +26,8 @@
   <link rel="stylesheet" href="pkg/deck.js/extensions/scale/deck.scale.css">
   
   {! CSS for Deck.js theme !}
-  <link rel="stylesheet" href="css/mnml.css">
+  <link rel="stylesheet" href="css/bootstrap-deckjs.css">
+  <!-- <link rel="stylesheet" href="css/mnml.css"> -->
   
   {! CSS for Deck.js transition !}
   <link rel="stylesheet" href="pkg/deck.js/themes/transition/horizontal-slide.css">
@@ -32,6 +36,9 @@
   <link rel="stylesheet" href="pkg/codemirror2/lib/codemirror.css">
   <link rel="stylesheet" href="pkg/codemirror2/theme/ambiance.css">
   
+  {! CSS for Highlight.js !}
+  <link rel="stylesheet" href="css/highlight.js/googlecode-deckjs.css">
+
   {! CSS override !}
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -64,10 +71,9 @@
   {! deck.hash snippet !}
   <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
 
-
   {! Grab CDN jQuery, with a protocol relative URL; fall back to local if offline !}
-  <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
-  <script>window.jQuery || document.write('<script src="env/js/jquery-1.7.min.js"><\/script>')</script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="env/js/jquery.min.js"><\/script>')</script>
 
   {! Load Javascript !}
   {! load Deck.js core and extensions !}
@@ -92,6 +98,9 @@
   {! load Codemirror2 and Skulpt functions to generate editors !}
   <script src="js/editor.js"></script>
 
+  {! load Highlight.js !}
+  <script src="env/js/highlight.min.js"></script>
+
   {! Presentation init !}
   <script>
     {! initialize Deck.js !}
@@ -112,6 +121,8 @@
         // Run code in editor to init ouput area
         runit(editor);
       });
+      // Highlight code not in CodeMirror2 with Highlight.js
+      $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
     });
   </script>
 </body>

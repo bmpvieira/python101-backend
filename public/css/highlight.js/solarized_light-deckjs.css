@@ -1,0 +1,90 @@
+/*
+
+Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>
+
+*/
+
+.deck-container pre code {
+  display: block; padding: 0.5em;
+  background: #fdf6e3; color: #657b83;
+}
+
+.deck-container pre .comment,
+.deck-container pre .template_comment,
+.deck-container pre .diff .header,
+.deck-container pre .doctype,
+.deck-container pre .lisp .string,
+.deck-container pre .javadoc {
+  color: #93a1a1;
+  font-style: italic;
+}
+
+.deck-container pre .keyword,
+.deck-container pre .css .rule .keyword,
+.deck-container pre .winutils,
+.deck-container pre .javascript .title,
+.deck-container pre .method,
+.deck-container pre .addition,
+.deck-container pre .css .tag,
+.deck-container pre .lisp .title {
+  color: #859900;
+}
+
+.deck-container pre .number,
+.deck-container pre .command,
+.deck-container pre .string,
+.deck-container pre .tag .value,
+.deck-container pre .phpdoc,
+.deck-container pre .tex .formula,
+.deck-container pre .regexp,
+.deck-container pre .hexcolor {
+  color: #2aa198;
+}
+
+.deck-container pre .title,
+.deck-container pre .localvars,
+.deck-container pre .function .title,
+.deck-container pre .chunk,
+.deck-container pre .decorator,
+.deck-container pre .builtin,
+.deck-container pre .built_in,
+.deck-container pre .lisp .title,
+.deck-container pre .identifier,
+.deck-container pre .title .keymethods,
+.deck-container pre .id {
+  color: #268bd2;
+}
+
+.deck-container pre .attribute,
+.deck-container pre .variable,
+.deck-container pre .instancevar,
+.deck-container pre .lisp .body,
+.deck-container pre .smalltalk .number,
+.deck-container pre .constant,
+.deck-container pre .class .title,
+.deck-container pre .parent,
+.deck-container pre .haskell .label {
+  color: #b58900;
+}
+
+.deck-container pre .preprocessor,
+.deck-container pre .pi,
+.deck-container pre .shebang,
+.deck-container pre .symbol,
+.deck-container pre .diff .change,
+.deck-container pre .special,
+.deck-container pre .keymethods,
+.deck-container pre .attr_selector,
+.deck-container pre .important,
+.deck-container pre .subst,
+.deck-container pre .cdata {
+  color: #cb4b16;
+}
+
+.deck-container pre .deletion {
+  color: #dc322f;
+}
+
+.deck-container pre .tex .formula {
+  background: #eee8d5;
+}

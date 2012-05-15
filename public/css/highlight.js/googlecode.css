@@ -1,0 +1,142 @@
+/*
+
+Google Code style (c) Aahan Krish <geekpanth3r@gmail.com>
+
+*/
+
+.deck-container pre code {
+  display: block; padding: 0.5em;
+  background: white; color: black;
+}
+
+.deck-container pre .comment,
+.deck-container pre .template_comment,
+.deck-container pre .javadoc,
+.deck-container pre .comment * {
+  color: #800;
+}
+
+.deck-container pre .keyword,
+.deck-container pre .ruby .function .keyword,
+.deck-container pre .function .keyword,
+.deck-container pre .sub .keyword,
+.deck-container pre .method,
+.deck-container pre .list .title,
+.deck-container pre .tag .title,
+.deck-container pre .setting .value,
+.deck-container pre .winutils,
+.deck-container pre .tex .command {
+  color: #008;
+}
+
+.deck-container pre .envvar,
+.deck-container pre .tex .special {
+  color: #660;
+}
+
+.deck-container pre .string,
+.deck-container pre .tag .value,
+.deck-container pre .cdata,
+.deck-container pre .filter .argument,
+.deck-container pre .attr_selector,
+.deck-container pre .apache .cbracket,
+.deck-container pre .date,
+.deck-container pre .regexp {
+  color: #080;
+}
+
+.deck-container pre .sub .identifier,
+.deck-container pre .pi,
+.deck-container pre .tag,
+.deck-container pre .tag .keyword,
+.deck-container pre .decorator,
+.deck-container pre .ini .title,
+.deck-container pre .shebang,
+.deck-container pre .input_number,
+.deck-container pre .hexcolor,
+.deck-container pre .rules .value,
+.deck-container pre .css .value .number,
+.deck-container pre .literal,
+.deck-container pre .symbol,
+.deck-container pre .ruby .symbol .string,
+.deck-container pre .ruby .symbol .keyword,
+.deck-container pre .ruby .symbol .keymethods,
+.deck-container pre .number,
+.deck-container pre .css .function {
+  color: #066;
+}
+
+.deck-container pre .class .title,
+.deck-container pre .haskell .label,
+.deck-container pre .smalltalk .class,
+.deck-container pre .javadoctag,
+.deck-container pre .yardoctag,
+.deck-container pre .phpdoc,
+.deck-container pre .typename,
+.deck-container pre .tag .attribute,
+.deck-container pre .doctype,
+.deck-container pre .class .id,
+.deck-container pre .built_in,
+.deck-container pre .setting,
+.deck-container pre .params,
+.deck-container pre .variable {
+  color: #606;
+}
+
+.deck-container pre .css .tag,
+.deck-container pre .rules .property,
+.deck-container pre .pseudo,
+.deck-container pre .subst {
+  color: #000;
+}
+
+.deck-container pre .css .class, pre .css .id {
+  color: #9B703F;
+}
+
+.deck-container pre .value .important {
+  color: #ff7700;
+  font-weight: bold;
+}
+
+.deck-container pre .rules .keyword {
+  color: #C5AF75;
+}
+
+.deck-container pre .annotation,
+.deck-container pre .apache .sqbracket,
+.deck-container pre .nginx .built_in {
+  color: #9B859D;
+}
+
+.deck-container pre .preprocessor,
+.deck-container pre .preprocessor * {
+  color: #444;
+}
+
+.deck-container pre .tex .formula {
+  background-color: #EEE;
+  font-style: italic;
+}
+
+.deck-container pre .diff .header,
+.deck-container pre .chunk {
+  color: #808080;
+  font-weight: bold;
+}
+
+.deck-container pre .diff .change {
+  background-color: #BCCFF9;
+}
+
+.deck-container pre .addition {
+  background-color: #BAEEBA;
+}
+
+.deck-container pre .deletion {
+  background-color: #FFC8BD;
+}
+
+.deck-container pre .comment .yardoctag {
+  font-weight: bold;
+}
