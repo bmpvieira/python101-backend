@@ -93,6 +93,10 @@ function mdfilter(chunk, context, bodies) {
   // Load html from rendered markdown
   $ = cheerio.load(md(catdata));
   // Add Deck.js markup by using h1 to split and for slides id
+  // change h2 to h3 before anything
+  $('h2').each(function(i,v) {
+    $(this).replaceWith('<h3>' + $(this).text() + '</h3>');
+  });
   $('h1').each(function(i, v) {
     var slideid = $(this).text().replace(/[^a-z0-9]/gi, '_').toLowerCase() + i;
     if(i === 0) {
@@ -100,6 +104,7 @@ function mdfilter(chunk, context, bodies) {
     } else {
       $(this).before('gtcsectionlt \n gtosection id="' + slideid + '" class="slide"lesserth');
     }
+    // Change h1 to h2
     $(this).replaceWith('<h2>' + $(this).text() + '</h2>');
   });
   // Add CodeMirror2 markup by replacing where lang=python with textarea
