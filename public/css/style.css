@@ -48,17 +48,22 @@
 }
 
 .deck-container pre code {
-  	display: block; padding: 0.5em;
+  	display: block; padding: .5em;
   	background: transparent;
 }
 
 .deck-container .code {
+	font-family: 'Droid Sans Mono', monospace, sans-serif;
 	-moz-border-radius: 3px;
 	-moz-box-shadow: 0px 0px 5px black;
     -webkit-box-shadow: 0px 0px 5px black;
 }
 
-.CodeMirror-gutter {
+.deck-container .CodeMirror {
+	margin-top: .5em;
+}
+
+.deck-container .CodeMirror-gutter {
 	-webkit-border-top-left-radius: 4px;
 	-webkit-border-bottom-left-radius: 4px;
 	-moz-border-radius-topleft: 4px;
@@ -69,7 +74,11 @@
     -webkit-box-shadow: 0px 0px 5px black;
 }
 
-.CodeMirror-scroll {
+.deck-container .CodeMirror-scroll {
+	height: auto;
+	overflow-y: hidden;
+	overflow-x: auto;
+	width: 100%
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -77,8 +86,8 @@
     -webkit-box-shadow: 0px 0px 5px black;
 }
 
-
 .deck-container .codeout {
+	font-family: 'Droid Sans Mono', monospace, sans-serif;
 	margin-top: 4px;
 	color: #dfdfab;
 	background-color: #152c2c;
