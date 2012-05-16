@@ -1,5 +1,5 @@
 .deck-container {
-	font-size: 1.25em;
+	font-size: 1.8em;
 	font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -16,7 +16,7 @@
 
 .deck-container h3,
 .deck-container h4 {
-	font-size: 1.3em;
+	font-size: 1.4em;
     margin-top: .5em;
     margin-bottom: .1em;
     padding-bottom: .2em;
@@ -24,8 +24,14 @@
 
 .deck-container p {
   font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.5em;
+  line-height:1.2;
+}
+
+.deck-container li {
+  font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1em;
-  line-height:1.5;
+  line-height:1;
 }
 
 .deck-container textarea {
@@ -52,8 +58,8 @@
 .deck-container pre code {
   	display: block; padding: .5em;
   	background: transparent;
-  	font-size: 1.5em;
-	line-height:1.5;
+  	font-size: 2em;
+	line-height:1;
 }
 
 .deck-container .code {
@@ -92,7 +98,7 @@
 
 .deck-container .codeout {
 	font-family: 'Droid Sans Mono', monospace, sans-serif;
-	font-size: 1em;
+	font-size: 1.5em;
 	line-height:1.5;
 	margin-top: 4px;
 	color: #dfdfab;
@@ -126,12 +132,12 @@
 	color: #888;
 	text-transform: uppercase;
 	font-weight: bold; 
-	font-size: 0.7em;
+	font-size: 1em;
 	padding: 0 48px;
 	position: absolute;
     left: 0%;
     right: 0;
-    top: 98%;
+    top: 97%;
     -webkit-transform: translate(0, -50%);
   	-moz-transform: translate(0, -50%);
   	-ms-transform: translate(0, -50%);

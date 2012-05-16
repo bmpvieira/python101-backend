@@ -10,7 +10,7 @@ function geneditor(idnum) {
     lineNumbers: true, 
     lineWrapping: true, 
     indentUnit: 4,
-    theme: "ambiance",
+    theme: "rubyblue",
     readOnly: false,
     //keyMap: "vim",
     extraKeys: {

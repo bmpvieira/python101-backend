@@ -37,6 +37,7 @@
   {! CSS for CodeMirror2 core and theme !}
   <link rel="stylesheet" href="pkg/codemirror2/lib/codemirror.css">
   <link rel="stylesheet" href="pkg/codemirror2/theme/ambiance.css">
+  <link rel="stylesheet" href="pkg/codemirror2/theme/rubyblue.css">
   
   {! CSS for Highlight.js !}
   <link rel="stylesheet" href="css/highlight.js/googlecode-deckjs.css">
