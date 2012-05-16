@@ -9,8 +9,8 @@
 
 .deck-container h2 {
 	font-size: 1.8em;
-	padding-bottom: .2em;
-	margin-bottom: .2em;
+	padding-bottom: .5em;
+	margin-bottom: .5em;
 	border-bottom: 3px groove rgba(255, 255, 255, 1);
 }
 
@@ -18,7 +18,7 @@
 .deck-container h4 {
 	font-size: 1.4em;
     margin-top: .5em;
-    margin-bottom: .1em;
+    margin-bottom: .2em;
     padding-bottom: .2em;
 }
 
@@ -58,7 +58,7 @@
 .deck-container pre code {
   	display: block; padding: .5em;
   	background: transparent;
-  	font-size: 2em;
+  	font-size: 2.5em;
 	line-height:1;
 }
 
@@ -97,9 +97,10 @@
 }
 
 .deck-container .codeout {
+	margin-bottom: .5em;
 	font-family: 'Droid Sans Mono', monospace, sans-serif;
-	font-size: 1.5em;
-	line-height:1.5;
+	font-size: 1.0em;
+	line-height: 1.2;
 	margin-top: 4px;
 	color: #dfdfab;
 	background-color: #152c2c;
