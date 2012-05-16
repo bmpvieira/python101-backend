@@ -36,7 +36,7 @@
 }
 .deck-container p {
   margin: 0 0 9px;
-  font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
 }
@@ -610,7 +610,7 @@
 .deck-container button,
 .deck-container select,
 .deck-container textarea {
-  font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .deck-container label {
   display: block;

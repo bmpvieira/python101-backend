@@ -1,5 +1,6 @@
 .deck-container {
 	font-size: 1.25em;
+	font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .deck-container h1 {
@@ -21,6 +22,18 @@
     padding-bottom: .2em;
 }
 
+.deck-container p {
+  font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.deck-container textarea {
+  font-family: 'Droid Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.deck-container pre, .deck-container code, .deck-container kbd, .deck-container samp {
+  font-family: 'Droid Sans Mono', monospace, sans-serif;
+}
+
 .deck-container .slide {
 	background: rgb(255,255,255); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
@@ -39,6 +52,32 @@
   	background: transparent;
 }
 
+.deck-container .code {
+	-moz-border-radius: 3px;
+	-moz-box-shadow: 0px 0px 5px black;
+    -webkit-box-shadow: 0px 0px 5px black;
+}
+
+.CodeMirror-gutter {
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	-moz-box-shadow: 0px 0px 5px black;
+    -webkit-box-shadow: 0px 0px 5px black;
+}
+
+.CodeMirror-scroll {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+	-moz-box-shadow: 0px 0px 5px black;
+    -webkit-box-shadow: 0px 0px 5px black;
+}
+
+
 .deck-container .codeout {
 	margin-top: 4px;
 	color: #dfdfab;
@@ -51,8 +90,3 @@
     -webkit-box-shadow: 0px 0px 5px black;
 }
 
-.deck-container .code {
-	-moz-border-radius: 3px;
-	-moz-box-shadow: 0px 0px 5px black;
-    -webkit-box-shadow: 0px 0px 5px black;
-}
