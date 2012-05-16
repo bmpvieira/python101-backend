@@ -126,6 +126,8 @@
       });
       // Highlight code not in CodeMirror2 with Highlight.js
       $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+      // Add author in footer using p.firstp
+      $('.deck-container').append('<p class="myfooter">' + $('#firstp').text() + '</p>')
     });
   </script>
 </body>

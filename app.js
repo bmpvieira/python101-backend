@@ -104,8 +104,6 @@ function mdfilter(chunk, context, bodies) {
     if(i === 0) {
       $(this).before('gtosection id="' + slideid + '" class="slide"lesserth');
     } else {
-      // make first p footer like
-      $(this).after('<p class="myfooter">' + $('#firstp').text() + "</p>");
       // create slides
       $(this).before('gtcsectionlt \n gtosection id="' + slideid + '" class="slide"lesserth');
       // Change h1 to h2
