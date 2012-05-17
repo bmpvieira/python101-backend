@@ -4,10 +4,10 @@ var express = require('express')
     , fs = require('fs')
     , path = require('path')
     , request = require('request')
-    , cheerio = require('cheerio')
     , cons = require('consolidate')
     , dust = require('dustjs-linkedin')
-    , md = require('github-flavored-markdown').parse;
+    , md = require('github-flavored-markdown').parse
+    , mdfilter = require('./modules/mdfilter');
 
 var app = express();
 
@@ -36,33 +36,33 @@ app.configure(function(){
 
 // register .md as an engine in express view system
 app.engine('md', function(path, options, fn){
-  fs.readFile(path, 'utf8', function(err, str){
-    if (err) return fn(err);
-    try {
-      var html = md(str);
-      html = html.replace(/\{([^}]+)\}/g, function(_, name){
-        return options[name] || '';
-      })
-      fn(null, html);
-    } catch(err) {
-      fn(err);
-    }
-  });
+    fs.readFile(path, 'utf8', function(err, str){
+        if (err) return fn(err);
+        try {
+            var html = md(str);
+            html = html.replace(/\{([^}]+)\}/g, function(_, name){
+                return options[name] || '';
+            })
+            fn(null, html);
+        } catch(err) {
+            fn(err);
+        }
+    });
 })
 
 app.configure('development', function(){
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 });
 
 // error handling
 app.use(function(req, res, next){
-  // respond with html page
-  if (req.accepts('html')) {
-    res.status(404);
-    base.url = req.url
-    res.render('404', base);
-    return;
-  }
+    // respond with html page
+    if (req.accepts('html')) {
+        res.status(404);
+        base.url = req.url
+        res.render('404', base);
+        return;
+    }
 
   // respond with json
   if (req.accepts('json')) {
@@ -83,49 +83,6 @@ app.use(function(err, req, res, next){
   res.render('500', base);
 });
 
-// markdown helper function for dust.js
-function mdfilter(chunk, context, bodies) {
-  var catdata = '';
-  chunk.tap(function(data) {
-    catdata += data;
-    return '';
-  }).render(bodies.block, context).untap();
-  // Load html from rendered markdown
-  $ = cheerio.load(md(catdata));
-  // Add Deck.js markup by using h1 to split and for slides id
-  // first p special formating for first slide
-  $('p').first().attr('id', 'firstp')
-  // change h2 to h3 before anything
-  $('h2').each(function(i,v) {
-    $(this).replaceWith('<h3>' + $(this).text() + '</h3>');
-  });
-  $('h1').each(function(i, v) {
-    var slideid = $(this).text().replace(/[^a-z0-9]/gi, '_').toLowerCase() + i;
-    if(i === 0) {
-      $(this).before('gtosection id="' + slideid + '" class="slide"lesserth');
-    } else {
-      // create slides
-      $(this).before('gtcsectionlt \n gtosection id="' + slideid + '" class="slide"lesserth');
-      // Change h1 to h2
-      $(this).replaceWith('<h2>' + $(this).text() + '</h2>');
-
-    }
-  });
-  // Add CodeMirror2 markup by replacing where lang=python with textarea
-  $('pre[lang="python"]').each(function(i, v) {
-    $(this).parent().after('<pre id="codeout' + i + '" class="codeout"></pre>');
-    $(this).parent().replaceWith('<textarea id="code' + i + '" class="code">'
-      + $(this).text()) 
-      + '</textarea>';
-  });
-  // TODO: Find a way to avoid doing this regex by replacing directly with correct tags
-  var output = $.html().replace(/gtosection/g,'<section').replace(/gtcsectionlt/g,'</section>').replace(/lesserth/g,'>')
-    + '</section>';
-  // BUG: Cheerio has some decoding bugs
-  output = output.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-  return chunk.write(output);
-};
-
 // base context
 var base = {
     author: {
@@ -141,12 +98,13 @@ var base = {
     },
     google_analytics_id: 'ABCD',
     // markdown filter
-    md: mdfilter
-  };
+    md: mdfilter.clientSide
+};
 
-// routes
-
+// Routes
 var presentations = [];
+
+// index that lists presentations
 app.get('/', function(req, res, next) {
   var url = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1';
   request(url, function(err, resp, body){
@@ -167,7 +125,8 @@ app.get('/', function(req, res, next) {
   });
 });
 
-app.get('/:presentation', function(req, res, next) {
+// presentations rendered client side
+app.get('/client/:presentation', function(req, res, next) {
   for (i in presentations) {
     if (presentations[i]['name'] == req.params.presentation) {
       var url = presentations[i]['url']
@@ -175,7 +134,21 @@ app.get('/:presentation', function(req, res, next) {
   };
   request(url, function(err, resp, body){
     base['slides'] = body;
-    res.render('slides', base);
+    res.render('slides-client', base);
+  });
+});
+
+//presentations rendered server side
+app.get('/:presentation', function(req, res, next) {
+  for (i in presentations) {
+    if (presentations[i]['name'] == req.params.presentation) {
+      var url = presentations[i]['url']
+    };
+  };
+  request(url, function(err, resp, body){
+    var slides = mdfilter.serverSide(body);
+    base['slides'] = slides;
+    res.render('slides-server', base);
   });
 });
 

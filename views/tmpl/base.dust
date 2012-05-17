@@ -49,6 +49,7 @@
 <body class="deck-container">
 
   {! Begin slides !}
+
   {+slides/}
 
   {! Setup slides snippets !}
@@ -73,12 +74,13 @@
 
   {! deck.hash snippet !}
   <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+  
+  {! Load Javascript !}
 
   {! Grab CDN jQuery, with a protocol relative URL; fall back to local if offline !}
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="env/js/jquery.min.js"><\/script>')</script>
 
-  {! Load Javascript !}
   {! load Deck.js core and extensions !}
   <script src="pkg/deck.js/core/deck.core.js"></script>
   <script src="pkg/deck.js/extensions/hash/deck.hash.js"></script>
@@ -89,45 +91,42 @@
   <script src="pkg/deck.js/extensions/scale/deck.scale.js"></script>
   <script src="pkg/deck.js/modernizr.custom.js"></script>
 
-  {! load CodeMirror2 core, modes and keymap !}
+  {! load CodeMirror2 core, modes, keymap and utils !}
   <script src="pkg/codemirror2/lib/codemirror.js"></script>
   <script src="pkg/codemirror2/mode/javascript/javascript.js"></script>
   <script src="pkg/codemirror2/mode/python/python.js"></script>
   <script src="pkg/codemirror2/keymap/vim.js"></script>
+  <script src="pkg/codemirror2/lib/util/foldcode.js"></script>
 
   {! load Skulpt core !}
   <script src="pkg/skulpt/dist/skulpt.js"></script>
 
-  {! load Codemirror2 and Skulpt functions to generate editors !}
-  <script src="js/editor.js"></script>
-
   {! load Highlight.js !}
   <script src="env/js/highlight.min.js"></script>
 
+  {! load custom functions to generate editors with Codemirror2 and Skulpt !}
+  <script src="js/editor.js"></script>
+
   {! Presentation init !}
   <script>
-    {! initialize Deck.js !}
-    $(function() {
-      $.deck('.slide');
-    });
 
-    {! generate CodeMirror2 editors for each code textarea !}
+
     $(window).load(function() {
-      $('.code').each(function(i, v) {
-        var editorid = 'editor' + i;
-        window[editorid] = geneditor(i);
-        window[editorid].idnum = i;
-        // Bug workaround: CodeMirror2's Python mode crashes with some first lines, so adding usual env line solves it, but this line's hash mark must also be escaped to avoid becoming header due to bug in markdown parser. Finaly, the escape slash must be removed because md parser doesn't do it.
-        var editor = window[editorid];
-        var value = editor.getValue().replace(/\\/g, "");
-        editor.setValue(value);
-        // Run code in editor to init ouput area
-        runit(editor);
-      });
-      // Highlight code not in CodeMirror2 with Highlight.js
-      $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-      // Add author in footer using p.firstp
-      $('.deck-container').append('<p class="myfooter">' + $('#firstp').text() + '</p>')
+
+        {! generate CodeMirror2 editors for each code textarea !}
+        var editors = {};
+        $('.code').each(function(i, v) {
+            editors[i] = editorInit(i);
+            editors[i].idnum = i; // for easier ref
+            editors[i].hlLine = editors[i].setLineClass(1, "activeline"); // 1 because first line is hidden
+        });
+        editorsFixes(editors);
+        {! Highlight code not in CodeMirror2 with Highlight.js !}
+        $('pre code').each(function(i, v) {hljs.highlightBlock(v)});
+        {! Add author in footer using p.firstp !}
+        $('.deck-container').append('<p class="myfooter">' + $('#firstp').text() + '</p>')
+        {! initialize Deck.js !}
+        $(function() {$.deck('.slide');});
     });
   </script>
 </body>
