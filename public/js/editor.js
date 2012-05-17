@@ -63,10 +63,10 @@ function editorsFixes(editors) {
         // Escape comments
         value = editor.getValue().replace(/\\/g, "");
         editor.setValue(value);
+        // Run code to set output size
         runit(editors[i], i);
         editor.refresh();
-        // Bug workaround: CodeMirror2's Python mode crashes with some first lines, so adding hidden line with hash symbol solves it.        
-        editor.replaceRange('#\n', {line: 0, ch: 0});
+        // Bug workaround: CodeMirror2's python.js mode crashes with some first lines (like assigments), so mdfilter adds a hashbang that is hidden here.
         editor.hideLine(0);
         // Code folding
         lines = value.split('\n')

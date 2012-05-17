@@ -123,7 +123,7 @@
 
         {! Add author in footer using p.firstp !}
         $('.deck-container').append('<p class="myfooter">' + $('#firstp').text() + '</p>')
-        
+
         {! initialize Deck.js !}
         $(function() {$.deck('.slide');});
         for (var i in editors) {

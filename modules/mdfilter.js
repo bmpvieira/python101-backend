@@ -41,6 +41,7 @@ function clientSide(chunk, context, bodies) {
             + i 
             + '" class="codeout"></pre>');
         $(this).parent().replaceWith('<textarea id="code' + i + '" class="code">'
+            + '#\n' // set first line to hashbang to fix CodeMirror2 python.js mode bug
             + $(this).text()) 
             + '</textarea>';
     });
@@ -85,6 +86,7 @@ function serverSide(mdbody) {
             + i 
             + '" class="codeout"></pre>');
         $(this).parent().replaceWith('<textarea id="code' + i + '" class="code">'
+            + '#\n' // set first line to hashbang to fix CodeMirror2 python.js mode bug
             + $(this).text()) 
             + '</textarea>';
     });
