@@ -115,18 +115,20 @@
 
         {! generate CodeMirror2 editors for each code textarea !}
         var editors = {};
-        $('.code').each(function(i, v) {
-            editors[i] = editorInit(i);
-            editors[i].idnum = i; // for easier ref
-            editors[i].hlLine = editors[i].setLineClass(1, "activeline"); // 1 because first line is hidden
-        });
+        $('.code').each(function(i, v) {editors[i] = editorInit(i);});
         editorsFixes(editors);
+
         {! Highlight code not in CodeMirror2 with Highlight.js !}
         $('pre code').each(function(i, v) {hljs.highlightBlock(v)});
+
         {! Add author in footer using p.firstp !}
         $('.deck-container').append('<p class="myfooter">' + $('#firstp').text() + '</p>')
+        
         {! initialize Deck.js !}
         $(function() {$.deck('.slide');});
+        for (var i in editors) {
+            editors[i].refresh();
+        }
     });
   </script>
 </body>

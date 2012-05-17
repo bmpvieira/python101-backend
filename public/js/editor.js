@@ -24,6 +24,11 @@ function editorInit(idnum) {
         }
         // fix for python.js bug with 1st lines, see editorFixes()
         , firstLineNumber: 0
+        // current line highlight
+        , onCursorActivity: function(cm) {
+                cm.setLineClass(cm.hlLine, null, null);
+                cm.hlLine = cm.setLineClass(cm.getCursor().line, null, "activeline");
+        }
     });
 }
 
@@ -53,6 +58,8 @@ function runit(cm) {
 function editorsFixes(editors) {
     for (var i in editors) {
         var editor = editors[i];
+        editors[i].idnum = i; // for easier ref in skulpt
+        editors[i].hlLine = editors[i].setLineClass(1, "activeline"); // 1 because first line is hidden
         // Escape comments
         value = editor.getValue().replace(/\\/g, "");
         editor.setValue(value);
@@ -64,20 +71,10 @@ function editorsFixes(editors) {
         // Code folding
         lines = value.split('\n')
         for (var i in lines) {
-            console.log(lines[i]);
             if (lines[i].match(/.*\#folded$/) != null) {
                 i++; // because of hideLine
                 foldFunc(editor, i); 
             }
         }
-        editor.setOption("onCursorActivity", function() {
-            //TODO: find a way to avoid doing this for all editors instead of just the one focused
-            for (var i in editors) {
-                editor = editors[i]
-                editor.setLineClass(1, null, null); // this shouldn't be needed
-                editor.setLineClass(editor.hlLine, null, null);
-                editor.hlLine = editor.setLineClass(editor.getCursor().line, null, "activeline");
-            }
-        });
     }
 }
