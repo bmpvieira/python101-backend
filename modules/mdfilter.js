@@ -55,6 +55,25 @@ function clientSide(chunk, context, bodies) {
 
 // Server side render of markdown for dust.js and deck.js
 function serverSide(mdbody) {
+
+    /** BUG workaround 
+    Github-flavored-markdown converts something like:
+    
+        while number <= 0: 
+            print number 
+            number += 1 
+
+    to:
+
+        <= 0:="0:" print="print" number="number" +="1"></=>
+    
+    so, to avoid this and eventualy other problems, convert < and > to &lt; and &gt;
+    This must be undone later on to avoid problems with skulpt
+    Update: this seems to be a bug in Cheerio after all, because it doesn't shows up
+    when converting from local files
+    */
+    mdbody = mdbody.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     // Load html from rendered markdown
     $ = cheerio.load(md(mdbody));
     // Add Deck.js markup by using h1 to split and for slides id

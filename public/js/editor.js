@@ -1,10 +1,11 @@
-// Init code folding helper for CodeMirror2
-var foldFunc = CodeMirror.newFoldFunction(CodeMirror.indentRangeFinder);
-
 // CodeMirror2 editor initializer
 function editorInit(idnum) {
-    var id = document.getElementById('code' + idnum);
-    return CodeMirror.fromTextArea(id, {
+    // Init code folding helper for CodeMirror2
+    var foldFunc = CodeMirror.newFoldFunction(CodeMirror.indentRangeFinder);
+    // Get code textarea id
+    var codetextarea = document.getElementById('code' + idnum);
+    // Init editor
+    var editor = CodeMirror.fromTextArea(codetextarea, {
         mode: { 
             name: "python", 
             version: 2, 
@@ -15,21 +16,77 @@ function editorInit(idnum) {
         , indentUnit: 4
         , theme: "rubyblue"
         , readOnly: false
-        , onGutterClick: foldFunc
+        , onGutterClick: function(cm, line) {
+            var cmOrigHeight = $(cm.getScrollerElement()).height();
+            foldFunc(cm, line);
+            cm.refresh();
+            checkEditorHeight(cm, cmOrigHeight);
+        }
+        , onKeyEvent: function(cm, key) {
+            if((key.keyCode == 13) || (key.keyCode == 8)) {
+                var cmOrigHeight = $(cm.getScrollerElement()).height();
+                checkEditorHeight(cm, cmOrigHeight);
+            };
+        }
         //, keyMap: "vim"
         , extraKeys: {
             "Shift-Enter": function(cm) {
                 runit(cm);
+            },
+            "Ctrl-F": function(cm) {
+                foldFunc_html(cm, cm.getCursor().line);
+            },
+            "F11": function() {
+              var scroller = editor.getScrollerElement();
+              if (scroller.className.search(/\bCodeMirror-fullscreen\b/) === -1) {
+                scroller.className += " CodeMirror-fullscreen";
+                scroller.style.height = "100%";
+                scroller.style.width = "100%";
+                editor.refresh();
+              } else {
+                scroller.className = scroller.className.replace(" CodeMirror-fullscreen", "");
+                scroller.style.height = '';
+                scroller.style.width = '';
+                editor.refresh();
+              }
+            },
+            "Esc": function() {
+              var scroller = editor.getScrollerElement();
+              if (scroller.className.search(/\bCodeMirror-fullscreen\b/) !== -1) {
+                scroller.className = scroller.className.replace(" CodeMirror-fullscreen", "");
+                scroller.style.height = '';
+                scroller.style.width = '';
+                editor.refresh();
+              }
             }
         }
         // fix for python.js bug with 1st lines, see editorFixes()
         , firstLineNumber: 0
         // current line highlight
         , onCursorActivity: function(cm) {
-                cm.setLineClass(cm.hlLine, null, null);
-                cm.hlLine = cm.setLineClass(cm.getCursor().line, null, "activeline");
+            cm.setLineClass(cm.hlLine, null, null);
+            cm.hlLine = cm.setLineClass(cm.getCursor().line, null, "activeline");
         }
     });
+    // Set idnum for reference in skulpt
+    editor.idnum = idnum;
+    // Set default highlight line
+    editor.hlLine = editor.setLineClass(0, "activeline");
+    // Replace slashes from escaped char or comments
+    var value = editor.getValue().replace(/\\/g, "");
+    editor.setValue(value);
+    // BUG workaround: CodeMirror2's python.js mode crashes with some first lines (like assigments), so mdfilter adds a hashbang that is hidden here.
+    editor.hideLine(0);
+    // Run code to set code output size
+    runit(editor, idnum);
+    // Fold editor
+    var lines = value.split('\n');
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].match(/.*\#folded$/) != null) {
+            foldFunc(editor, i);
+        };
+    };
+    return editor
 }
 
 // Skulpt output formating
@@ -54,27 +111,16 @@ function runit(cm) {
     }
 }
 
-// CodeMirror2 editor fixes like bugs and special situations
-function editorsFixes(editors) {
-    for (var i in editors) {
-        var editor = editors[i];
-        editors[i].idnum = i; // for easier ref in skulpt
-        editors[i].hlLine = editors[i].setLineClass(1, "activeline"); // 1 because first line is hidden
-        // Escape comments
-        value = editor.getValue().replace(/\\/g, "");
-        editor.setValue(value);
-        // Run code to set output size
-        runit(editors[i], i);
-        editor.refresh();
-        // Bug workaround: CodeMirror2's python.js mode crashes with some first lines (like assigments), so mdfilter adds a hashbang that is hidden here.
-        editor.hideLine(0);
-        // Code folding
-        lines = value.split('\n')
-        for (var i in lines) {
-            if (lines[i].match(/.*\#folded$/) != null) {
-                i++; // because of hideLine
-                foldFunc(editor, i); 
-            }
-        }
+// Check if CodeMirror2 autoresize is out of page and needs scroll
+function checkEditorHeight(cm, cmOrigHeight) {
+    $('.CodeMirror-scroll').css({'overflow-y': 'hidden'});
+    $(cm.getScrollerElement()).height('auto');
+    cm.refresh();
+    var windowHeight = $(window).height();
+    var slideHeight = $('.deck-current').height();
+    if (slideHeight > windowHeight) {
+        $('.CodeMirror-scroll').css({'overflow-y': 'scroll'});
+        $(cm.getScrollerElement()).height(cmOrigHeight);
+        cm.refresh();
     }
-}
+};

@@ -11,7 +11,7 @@ var express = require('express')
 
 var app = express();
 
-// disable whitespace compression (needed for markdown filter)
+// disable whitespace compression (needed for markdown client-side filter)
 dust.optimizers.format = function(ctx, node) { return node };
 
 // assign the dust engine to .dust files
@@ -101,29 +101,75 @@ var base = {
     md: mdfilter.clientSide
 };
 
+// Variables
+var ptturl = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1'
+, pttpath = '../../../../run/media/bruno/Dropbox/Dropbox/documents/work/python101/urls.txt';
+
 // Routes
 var presentations = [];
 
 // index that lists presentations
-app.get('/', function(req, res, next) {
-  var url = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1';
-  request(url, function(err, resp, body){
-    var lines = body.split('\n');
-    presentations = [];
-    for (line in lines) {
-      var filename = lines[line].replace(/^.*[\\\/]/, '');
-      var filename_noext = filename.replace(/(?:\.([^.]+))?$/, '\1');
-      var filename_noext_websafe = filename_noext.replace(/[^a-z0-9_\-]/gi, '').toLowerCase();
-      var presentation = {
-        name: filename_noext_websafe,
-        url: lines[line]
-      };
-      presentations.push(presentation);
-    };
+app.get('/old', function(req, res, next) {
+    var url = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1'
+    , path = '../../../../run/media/bruno/Dropbox/Dropbox/Public/python101/urls.txt'
+    , presentations = renderPresentationsUrls(function(url, path) {
+        request(url, function(err, resp, body) {
+            if(resp == undefined) {
+                fs.readFile(path, 'utf8', function(err, str) {
+                    if (err) next(err);
+                    return str.split('\n');
+                });
+            } else {
+                if(resp.statusCode == 200) {
+                    return body.split('\n');
+                } else {
+                    console.log('err: '+ resp.statusCode);
+                    console.log(body);
+                    next(err);
+                }
+            };
+        });
     base['presentations'] = presentations;
     res.render('index', base);
-  });
+    });
 });
+
+// index that lists presentations
+app.get('/', function(req, res, next) {
+    presentations = [];
+    request(ptturl, function(err, resp, body) {
+        if(resp == undefined) {
+            fs.readFile(pttpath, 'utf8', function(err, str) {
+                if (err) next(err);
+                renderPresentationsIndex(str.split('\n'));
+                res.render('index', base);
+            });
+        } else {
+            if(resp.statusCode == 200) {
+                renderPresentationsIndex(body.split('\n'));
+                res.render('index', base);
+            } else {
+                console.log('err: '+ resp.statusCode);
+                console.log(body);
+                next(err);
+            }
+        };
+    });
+});
+
+function renderPresentationsIndex(lines) {
+    for (line in lines) {
+        var filename = lines[line].replace(/^.*[\\\/]/, '')
+        , filename_noext = filename.replace(/(?:\.([^.]+))?$/, '\1')
+        , filename_noext_websafe = filename_noext.replace(/[^a-z0-9_\-]/gi, '').toLowerCase()
+        , presentation = {
+            name: filename_noext_websafe,
+            url: lines[line]
+        };
+        presentations.push(presentation);
+    };
+    base['presentations'] = presentations;
+};
 
 // presentations rendered client side
 app.get('/client/:presentation', function(req, res, next) {
@@ -139,7 +185,7 @@ app.get('/client/:presentation', function(req, res, next) {
 });
 
 //presentations rendered server side
-app.get('/:presentation', function(req, res, next) {
+/* app.get('/:presentationold', function(req, res, next) {
   for (i in presentations) {
     if (presentations[i]['name'] == req.params.presentation) {
       var url = presentations[i]['url']
@@ -150,6 +196,35 @@ app.get('/:presentation', function(req, res, next) {
     base['slides'] = slides;
     res.render('slides-server', base);
   });
+}); */
+
+//presentations rendered server side
+app.get('/:presentation', function(req, res, next) {
+    for (i in presentations) {
+        if (presentations[i]['name'] == req.params.presentation) {
+            var url = presentations[i]['url']
+        };
+    };
+    try {
+        request(url, function(err, resp, body) {
+            if(resp.statusCode == 200) {
+                var slides = mdfilter.serverSide(body);
+                base['slides'] = slides;
+                res.render('slides-server', base);
+            } else {
+                console.log('err: '+ resp.statusCode);
+                console.log(body);
+                next(err);
+            }
+        });
+    } catch(err) {
+        fs.readFile(url, 'utf8', function(err, str) {
+            if (err) next(err);
+            var slides = mdfilter.serverSide(str);
+            base['slides'] = slides;
+            res.render('slides-server', base);
+        });
+    }
 });
 
 app.get('/404', function(req, res, next){

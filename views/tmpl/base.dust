@@ -11,7 +11,10 @@
   
   <meta name="description" content="{description}">
   <meta name="author" content="{autor}">
-  <meta name="viewport" content="width=1024, user-scalable=no">
+  {! Original viewport
+  <meta name="viewport" content="width=1024, user-scalable=no"> !}
+  {! For page to fit in mobile devices screen !}
+  <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
   
   {! CSS for Google Webfont Droid Sans !}
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
@@ -114,9 +117,10 @@
     $(window).load(function() {
 
         {! generate CodeMirror2 editors for each code textarea !}
-        var editors = {};
-        $('.code').each(function(i, v) {editors[i] = editorInit(i);});
-        editorsFixes(editors);
+        window.editors = [];
+        var foldFunc = CodeMirror.newFoldFunction(CodeMirror.indentRangeFinder);
+
+        $('.code').each(function(i, v) {window.editors[i] = editorInit(i);});
 
         {! Highlight code not in CodeMirror2 with Highlight.js !}
         $('pre code').each(function(i, v) {hljs.highlightBlock(v)});
@@ -126,9 +130,6 @@
 
         {! initialize Deck.js !}
         $(function() {$.deck('.slide');});
-        for (var i in editors) {
-            editors[i].refresh();
-        }
     });
   </script>
 </body>
