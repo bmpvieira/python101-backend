@@ -124,19 +124,17 @@ app.get('/old', function(req, res, next) {
     , path = '../../../../run/media/bruno/Dropbox/Dropbox/Public/python101/urls.txt'
     , presentations = renderPresentationsUrls(function(url, path) {
         request(url, function(err, resp, body) {
-            if(resp == undefined) {
+            if (resp == undefined) {
                 fs.readFile(path, 'utf8', function(err, str) {
                     if (err) next(err);
                     return str.split('\n');
                 });
+            } else if (resp.statusCode == 200) {
+                return body.split('\n');
             } else {
-                if(resp.statusCode == 200) {
-                    return body.split('\n');
-                } else {
-                    console.log('err: '+ resp.statusCode);
-                    console.log(body);
-                    next(err);
-                }
+                console.log('err: '+ resp.statusCode);
+                console.log(body);
+                next(err);
             };
         });
     base['presentations'] = presentations;
@@ -148,21 +146,19 @@ app.get('/old', function(req, res, next) {
 app.get('/', function(req, res, next) {
     presentations = [];
     request(ptturl, function(err, resp, body) {
-        if(resp == undefined) {
+        if (resp == undefined) {
             fs.readFile(pttpath, 'utf8', function(err, str) {
                 if (err) next(err);
                 renderPresentationsIndex(str.split('\n'));
                 res.render('index', base);
             });
+        } else if (resp.statusCode == 200) {
+            renderPresentationsIndex(body.split('\n'));
+            res.render('index', base);
         } else {
-            if(resp.statusCode == 200) {
-                renderPresentationsIndex(body.split('\n'));
-                res.render('index', base);
-            } else {
-                console.log('err: '+ resp.statusCode);
-                console.log(body);
-                next(err);
-            }
+            console.log('err: '+ resp.statusCode);
+            console.log(body);
+            next(err);
         };
     });
 });
@@ -306,7 +302,7 @@ function getTagSources(file, tag, attr, callback) {
 
 // Get item local or url for concat and code embeding
 function getCatItem(item, callback) {
-    if(item.match(/^http.*/)) {
+    if (item.match(/^http.*/)) {
          request(item, function(err, resp, body) {
             callback(null, body);
          });
@@ -322,7 +318,7 @@ function getCatItem(item, callback) {
 getTagSources('views/tmpl/base.dust', 'script', 'src', function(list) {
     async.concatSeries(list, getCatItem, function(err, scripts) {
         base.scripts = [];
-        for(var i = 0; i < scripts.length; i++) {
+        for (var i = 0; i < scripts.length; i++) {
             var ast = jsp.parse(scripts[i]); // parse code and get the initial AST
             ast = pro.ast_mangle(ast); // get a new AST with mangled names
             ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
@@ -336,7 +332,7 @@ getTagSources('views/tmpl/base.dust', 'script', 'src', function(list) {
 getTagSources('views/tmpl/base.dust', 'link', 'href', function(list) {
     async.concatSeries(list, getCatItem, function(err, styles) {
         base.styles = [];
-        for(var i = 0; i < styles.length; i++) {
+        for (var i = 0; i < styles.length; i++) {
             base.styles[i] = {style: styles[i]}
         }
     });
@@ -351,7 +347,7 @@ app.get('/:presentation', function(req, res, next) {
     };
     try {
         request(url, function(err, resp, body) {
-            if(resp.statusCode == 200) {
+            if (resp.statusCode == 200) {
                 var slides = mdfilter.serverSide(body);
                 $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text(); 

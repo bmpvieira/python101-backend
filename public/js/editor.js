@@ -33,8 +33,8 @@ function editorInit(idnum) {
             "Shift-Enter": function(cm) {
                 runit(cm);
             },
-            "Ctrl-q": function(cm) {
-                foldFunc_html(cm, cm.getCursor().line);
+            "Ctrl-Space": function(cm) {
+                foldFunc(cm, cm.getCursor().line);
             },
             "F11": function() {
               var scroller = editor.getScrollerElement();
@@ -84,6 +84,11 @@ function editorInit(idnum) {
     for (var i = 0; i < lines.length; i++) {
         if (lines[i].match(/.*\#folded$/) != null) {
             foldFunc(editor, i);
+        } else if (lines[i].match(/.*\#forceoutput$/) != null) {
+            editor.setOption("readOnly", "nocursor");
+            editor.hideLine(i);
+            var output = document.getElementById("codeout"+editor.idnum);
+            output.innerHTML = lines[i].replace(/\#forceoutput/, "");
         };
     };
     return editor
