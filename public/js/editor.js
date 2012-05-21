@@ -33,7 +33,7 @@ function editorInit(idnum) {
             "Shift-Enter": function(cm) {
                 runit(cm);
             },
-            "Ctrl-F": function(cm) {
+            "Ctrl-q": function(cm) {
                 foldFunc_html(cm, cm.getCursor().line);
             },
             "F11": function() {

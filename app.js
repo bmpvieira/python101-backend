@@ -98,12 +98,18 @@ var base = {
     title: 'Python 101',
     meta: {
       description: 'Slides for the Python course of the CoBiG² team in 2012 at FCUL, Lisbon, Portugal',
-      author: 'Bruno Vieira'
+      author: 'Python 101 Team'
     },
     google_analytics_id: 'ABCD',
     // markdown filter
     md: mdfilter.clientSide
 };
+
+
+// Get Creative Commons SVG in base
+fs.readFile('public/img/cc.min.svg', 'utf8', function(err, str) {
+    base.cc = str;
+});
 
 // Variables
 var ptturl = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1'
