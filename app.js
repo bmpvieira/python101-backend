@@ -4,15 +4,19 @@ var express = require('express')
     , fs = require('fs')
     , path = require('path')
     , request = require('request')
+    , async = require('async')
     , cons = require('consolidate')
     , dust = require('dustjs-linkedin')
     , md = require('github-flavored-markdown').parse
-    , mdfilter = require('./modules/mdfilter');
+    , cheerio = require('cheerio')
+    , mdfilter = require('./modules/mdfilter')
+    , jsp = require("uglify-js").parser
+    , pro = require("uglify-js").uglify;
 
 var app = express();
 
-// disable whitespace compression (needed for markdown client-side filter)
-dust.optimizers.format = function(ctx, node) { return node };
+// disable whitespace compression (nice for debug TODO: make deployment var dep)
+//dust.optimizers.format = function(ctx, node) { return node };
 
 // assign the dust engine to .dust files
 app.engine('dust', cons.dust);
@@ -179,7 +183,7 @@ app.get('/client/:presentation', function(req, res, next) {
     };
   };
   request(url, function(err, resp, body){
-    base['slides'] = body;
+    base.slides = body;
     res.render('slides-client', base);
   });
 });
@@ -198,6 +202,140 @@ app.get('/client/:presentation', function(req, res, next) {
   });
 }); */
 
+
+// Concatenate tags async src files, used to read and embed scripts and css
+function catTagFilesAsync(file, tag, callback) {
+    fs.readFile(file, 'utf8', function(err, str) {
+        if (err) next(err);
+        $ = cheerio.load(str);
+        var output = ""
+        ,   len = $(tag).size()
+        ,   counter = 0;
+        $(tag).each(function(i, v) {
+            var src = $(this).attr('src');
+            if (src != undefined) {
+                fs.readFile('public/' + src, 'utf8', function(err, body) {
+                    if (err) {
+                        request(src, function(err, resp, body) {
+                            if(resp.statusCode == 200) {
+                                console.log("ola");
+                                
+                                output += body;
+                                console.log(output);
+                                counter++;
+                                if(counter == len) {callback(output);}
+                            } else {
+                                next(err);
+                            }
+                        });
+                    } else {
+                        //if(counter == 2) {console.log(body); console.log(src);};
+                        output += body;
+                        counter++;
+                        if(counter == len) {callback(output);}
+                    };
+                });
+            } else {
+                counter++;
+                if(counter == len) {callback(output);}
+            }
+        });
+    });
+};
+
+
+// Concatenate tags src files, used to read and embed scripts and css
+function catTagFilesSync(file, tag, callback) {
+    try {
+        var base = fs.readFileSync(file, 'utf8')
+        $ = cheerio.load(base);
+        var output = ""
+        ,   len = $(tag).size()
+        ,   counter = 0;
+        $(tag).each(function(i, v) {
+            var src = $(this).attr('src');
+            if (src != undefined) {
+                try {
+                    body = fs.readFileSync('public/' + src, 'utf8');
+                } catch(err) {
+                    try {
+                        request(src, res);
+                    } catch(err) {
+                        next(err);
+                    }
+                }
+                output += body;
+                counter++;
+                if(counter == len) {callback(output);}
+            }
+            else{
+                counter++;
+                if(counter == len) {callback(output);}
+            }
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Get list of tags src files with, used to read and embed scripts and css
+function getTagSources(file, tag, attr, callback) {
+    fs.readFile(file, 'utf8', function(err, str) {
+        if (err) next(err);
+        $ = cheerio.load(str);
+        var output = []
+        ,   len = $(tag).size()
+        ,   counter = 0;
+        $(tag).each(function(i, v) {
+            var src = $(this).attr(attr);
+            if(src != undefined) {
+                output.push(src);
+            }
+            counter++
+            if(counter == len) {callback(output)};
+        });
+
+    });
+};
+
+// Get item local or url for concat and code embeding
+function getCatItem(item, callback) {
+    if(item.match(/^http.*/)) {
+         request(item, function(err, resp, body) {
+            callback(null, body);
+         });
+    }
+    else {
+        fs.readFile("public/" + item, 'utf8', function(err, body) {
+            callback(null, body);
+        });
+    }
+};
+
+// Embed js in base to allow single all-in-home html deployment
+getTagSources('views/tmpl/base.dust', 'script', 'src', function(list) {
+    async.concatSeries(list, getCatItem, function(err, scripts) {
+        base.scripts = [];
+        for(var i = 0; i < scripts.length; i++) {
+            var ast = jsp.parse(scripts[i]); // parse code and get the initial AST
+            ast = pro.ast_mangle(ast); // get a new AST with mangled names
+            ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
+            var script = pro.gen_code(ast, {inline_script: true}); // compressed code here
+            base.scripts[i] = {script: script}
+        }
+    });
+});
+
+// Embed css in base to allow single all-in-home html deployment
+getTagSources('views/tmpl/base.dust', 'link', 'href', function(list) {
+    async.concatSeries(list, getCatItem, function(err, styles) {
+        base.styles = [];
+        for(var i = 0; i < styles.length; i++) {
+            base.styles[i] = {style: styles[i]}
+        }
+    });
+});
+
 //presentations rendered server side
 app.get('/:presentation', function(req, res, next) {
     for (i in presentations) {
@@ -209,7 +347,9 @@ app.get('/:presentation', function(req, res, next) {
         request(url, function(err, resp, body) {
             if(resp.statusCode == 200) {
                 var slides = mdfilter.serverSide(body);
-                base['slides'] = slides;
+                $ = cheerio.load(slides);
+                base.meta.author = $('#firstp').text(); 
+                base.slides = slides;
                 res.render('slides-server', base);
             } else {
                 console.log('err: '+ resp.statusCode);
@@ -221,7 +361,9 @@ app.get('/:presentation', function(req, res, next) {
         fs.readFile(url, 'utf8', function(err, str) {
             if (err) next(err);
             var slides = mdfilter.serverSide(str);
-            base['slides'] = slides;
+            $ = cheerio.load(slides);
+            base.meta.author = $('#firstp').text(); 
+            base.slides = slides;
             res.render('slides-server', base);
         });
     }
@@ -245,3 +387,7 @@ var port = process.env.PORT || 3000;
 app.listen(port, function() {
   console.log("Listening on " + port);
 });
+
+//TODO: Check if error handling is done right or could be improved
+//TODO: Check more elegant way to mix stuff in routes
+//TODO: Clean up drafts and reorganize logic
