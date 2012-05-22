@@ -11,8 +11,8 @@
   
   <meta name="description" content="{meta.description}">
   <meta name="author" content="{meta.author}">
-  {! Original viewport
-  <meta name="viewport" content="width=1024, user-scalable=no"> !}
+  {! Original viewport !}
+  {! <!-- <meta name="viewport" content="width=1024, user-scalable=no"> --> !}
   {! For page to fit in mobile devices screen !}
   <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
   

@@ -11,7 +11,7 @@ function clientSide(chunk, context, bodies) {
         return '';
     }).render(bodies.block, context).untap();
     // Load html from rendered markdown
-    $ = cheerio.load(md(catdata));
+    var $ = cheerio.load(md(catdata));
     // Add Deck.js markup by using h1 to split and for slides id
     // first p special formating for first slide
     $('p').first().attr('id', 'firstp')
@@ -75,7 +75,7 @@ function serverSide(mdbody) {
     mdbody = mdbody.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     // Load html from rendered markdown
-    $ = cheerio.load(md(mdbody));
+    var $ = cheerio.load(md(mdbody));
     // Add Deck.js markup by using h1 to split and for slides id
     // first p special formating for first slide
     $('p').first().attr('id', 'firstp')

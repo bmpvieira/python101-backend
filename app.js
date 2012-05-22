@@ -11,7 +11,8 @@ var express = require('express')
     , cheerio = require('cheerio')
     , mdfilter = require('./modules/mdfilter')
     , jsp = require("uglify-js").parser
-    , pro = require("uglify-js").uglify;
+    , pro = require("uglify-js").uglify
+    , uglifycss = require("uglifycss");
 
 var app = express();
 
@@ -209,7 +210,7 @@ app.get('/client/:presentation', function(req, res, next) {
 function catTagFilesAsync(file, tag, callback) {
     fs.readFile(file, 'utf8', function(err, str) {
         if (err) next(err);
-        $ = cheerio.load(str);
+        var $ = cheerio.load(str);
         var output = ""
         ,   len = $(tag).size()
         ,   counter = 0;
@@ -245,12 +246,11 @@ function catTagFilesAsync(file, tag, callback) {
     });
 };
 
-
 // Concatenate tags src files, used to read and embed scripts and css
 function catTagFilesSync(file, tag, callback) {
     try {
         var base = fs.readFileSync(file, 'utf8')
-        $ = cheerio.load(base);
+        var $ = cheerio.load(base);
         var output = ""
         ,   len = $(tag).size()
         ,   counter = 0;
@@ -284,7 +284,7 @@ function catTagFilesSync(file, tag, callback) {
 function getTagSources(file, tag, attr, callback) {
     fs.readFile(file, 'utf8', function(err, str) {
         if (err) next(err);
-        $ = cheerio.load(str);
+        var $ = cheerio.load(str);
         var output = []
         ,   len = $(tag).size()
         ,   counter = 0;
@@ -323,7 +323,7 @@ getTagSources('views/tmpl/base.dust', 'script', 'src', function(list) {
             ast = pro.ast_mangle(ast); // get a new AST with mangled names
             ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
             var script = pro.gen_code(ast, {inline_script: true}); // compressed code here
-            base.scripts[i] = {script: script}
+            base.scripts[i] = {script: script};
         }
     });
 });
@@ -332,8 +332,14 @@ getTagSources('views/tmpl/base.dust', 'script', 'src', function(list) {
 getTagSources('views/tmpl/base.dust', 'link', 'href', function(list) {
     async.concatSeries(list, getCatItem, function(err, styles) {
         base.styles = [];
+        var options = {
+            expandVars: true
+            , uglyComments: true
+            , cuteComments: false
+        };
         for (var i = 0; i < styles.length; i++) {
-            base.styles[i] = {style: styles[i]}
+            style = uglifycss.processString(styles[i], options)
+            base.styles[i] = {style: style};
         }
     });
 });
@@ -349,7 +355,7 @@ app.get('/:presentation', function(req, res, next) {
         request(url, function(err, resp, body) {
             if (resp.statusCode == 200) {
                 var slides = mdfilter.serverSide(body);
-                $ = cheerio.load(slides);
+                var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text(); 
                 base.slides = slides;
                 res.render('slides-server', base);
@@ -363,7 +369,7 @@ app.get('/:presentation', function(req, res, next) {
         fs.readFile(url, 'utf8', function(err, str) {
             if (err) next(err);
             var slides = mdfilter.serverSide(str);
-            $ = cheerio.load(slides);
+            var $ = cheerio.load(slides);
             base.meta.author = $('#firstp').text(); 
             base.slides = slides;
             res.render('slides-server', base);
