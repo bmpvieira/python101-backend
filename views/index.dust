@@ -8,6 +8,10 @@
   {#presentations}
   	<a href="{name}">{name}</a><br />
   {/presentations}
+  <h3>Exercises</h3>
+  {#notebooks}
+  	<a href="{url}">{name}</a><br />
+  {/notebooks}
 </section>
 
 {/slides}

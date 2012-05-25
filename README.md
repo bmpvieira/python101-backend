@@ -4,7 +4,7 @@
 	In: views/tmpl/base.dust
 	Replace: $(function() {$.deck('.slide');
 	With: $(function() {$.deck('.slide'); $.deck('disableScale');});
-2. Disable all font color black and :after :before none (optional)
+2. Disable all font color black (for syntax higlight) and :after :before none (optional)
 	In: public/pkg/deck.js/deck.core.css
 	Comment: @media print { * {}}
 3. Fix CodeMirror2 box size
