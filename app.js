@@ -379,9 +379,9 @@ getTagSources('views/tmpl/base.dust', 'link', 'href', function(list) {
 
 //presentations rendered server side
 app.get('/:presentation', function(req, res, next) {
-    for (i in presentations) {
-        if (presentations[i]['name'] == req.params.presentation) {
-            var url = presentations[i]['url']
+    for (i in base['presentations']) {
+        if (base['presentations'][i]['name'] == req.params.presentation) {
+            var url = base['presentations'][i]['url']
         };
     };
     try {
