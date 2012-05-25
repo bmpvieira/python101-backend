@@ -399,3 +399,5 @@ app.listen(port, function() {
 //TODO: Check if error handling is done right or could be improved
 //TODO: Check more elegant way to mix stuff in routes
 //TODO: Clean up drafts and reorganize logic
+//TODO: Find a good way to print slides
+//TODO: Fix spaces tabs polution from editor

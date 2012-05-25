@@ -92,6 +92,7 @@ body.deck-container {
 
 .deck-container .CodeMirror {
 	margin-top: .5em;
+	/* font-size: 18pt !important; HACK: This is to fix print box being too large when print font smaller */
 }
 .deck-container .CodeMirror .activeline {
 	background: #1d3d59 !important;
@@ -121,17 +122,17 @@ body.deck-container {
 }
 
 .deck-container .CodeMirror-fullscreen {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            margin: 0;
-            padding: 0;
-            border: 0px solid #BBBBBB;
-            opacity: 1;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    margin: 0;
+    padding: 0;
+    border: 0px solid #BBBBBB;
+    opacity: 1;
 }
 
 .deck-container .codeout {
@@ -192,4 +193,165 @@ body.deck-container {
 	width: 2%;
 	vertical-align: middle;
 	height: 1.5em;
+}
+
+.printonly {
+	display: none;
+}
+
+@media print {
+	/*@page {
+      size: A4 portrait;
+      margin-left: 0.0cm;
+      margin-right: 0.0cm;
+    }*/
+
+    .printonly {
+    	display: block;
+    }
+
+    .noprint {
+    	display: none;
+    }
+
+  	.deck-container div#header {
+    	display: block;
+    	position: running(header);
+  	}
+  	
+  	@page {
+  		@top-center { 
+  			content: "hello";
+  		}
+  	}
+
+	* {
+		background: transparent !important;
+		text-shadow: none !important;
+		filter: none !important;
+	    -ms-filter: none !important;
+	    -webkit-box-reflect: none !important;
+	    -moz-box-reflect: none !important;
+	    -webkit-box-shadow: none !important;
+	    -moz-box-shadow: none !important;
+	    box-shadow: none !important;
+	    widows: 5;
+		orphans: 5;
+	}
+
+	.deck-container h1 {
+		font-family: 'Droid Serif', Georgia, "Times New Roman", Times, serif !important;
+		color: black !important;
+		float: none !important;
+		margin-top: 20px !important;
+		font-size: 36pt !important;
+		page-break-after: "" !important;
+	}
+
+	.deck-container h2, h3, p, ul, ol, li {
+		font-family: 'Droid Serif', Georgia, "Times New Roman", Times, serif !important;
+		color: black !important;
+		widows: 5;
+		orphans: 5;
+	}
+
+	.deck-container ul, ol, li {
+		font-size: 14pt !important;
+	}
+
+	.deck-container h2 {
+		font-size: 20pt !important;
+	}
+
+	.deck-container h3 {
+		font-size: 16pt !important;
+	}
+
+	.deck-container p {
+		font-size: 14pt !important;
+	}
+
+	.deck-container pre code {
+		font-size: 10pt !important;
+		widows: 5;
+		orphans: 5;
+	}
+
+	.deck-container .codeout {
+		font-size: 12pt !important;
+		color: green !important;
+		widows: 5;
+		orphans: 5;
+	}
+
+	.deck-container .CodeMirror {
+		font-size: 12pt !important;
+		-moz-border-radius: 3px !important;
+		border: 1px solid #d9d9d9 !important;
+		widows: 5;
+		orphans: 5;
+	}
+
+	.deck-container .CodeMirror-scroll {
+		height: auto !important;
+		overflow-y: hidden !important;
+		overflow-x: auto !important;
+	}
+
+	.deck-container .CodeMirror-gutter {
+		border-right-color: #d9d9d9 !important;
+	}
+
+	.deck-container .CodeMirror-gutter-text {
+		color: #d9d9d9 !important;
+	}
+
+	.deck-container > .slide {
+		page-break-after: avoid !important;
+		widows: 5;
+		orphans: 5;
+	}
+
+	.deck-container p#firstp {
+		color: black !important;
+		position: absolute !important;
+		width: 100% !important;
+		text-align: center !important;
+		top: 15% !important;
+		left: 0 !important;
+		
+	}
+
+	.myfooter {
+		display: none !important;
+	}
+
+	footer {
+		display: none !important;
+	}
+
+	/*
+	footer {
+		font-size: .5em !important;
+		overflow: visible !important;
+		width: 200% !important;
+		color: #d9d9d9 !important;
+		display: block !important;
+		position: absolute !important;
+		right: 0 !important;
+		bottom: 20% !important;
+		clear:both !important;
+		transform:rotate(-90deg) translate(0%, 1300%)!important;
+		-webkit-transform:rotate(-90deg) translate(0%, 1300%)!important;
+		-moz-transform:rotate(-90deg) translate(0%, 1300%)!important;
+		-o-transform:rotate(-90deg) translate(0%, 1300%)!important;
+		-ms-transform:rotate(-90deg) translate(0%, 1300%)!important;
+	}
+
+	footer svg {
+		width: 5% !important;
+		vertical-align: middle !important;
+		height: 2em !important;
+	}
+	*/
 }
