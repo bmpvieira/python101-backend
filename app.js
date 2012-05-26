@@ -377,6 +377,51 @@ getTagSources('views/tmpl/base.dust', 'link', 'href', function(list) {
     });
 });
 
+
+function imagesToArray($, callback) {
+    var images = [];
+    for (var i in $('img').get()) {
+        var elt = $('img').get(i);
+        var url = $(elt).attr('src');
+        image = {};
+        image.elt = elt;
+        image.url = url;
+        images.push(image);
+    }
+    callback(images)
+}
+    
+
+function imagesToBase64(images, callback) {
+    async.mapSeries(images, imageToBase64, function(err, imagesBase64) {
+        callback(imagesBase64);  
+    });
+}
+
+// Replace images src url with base64 data for embed in html
+function imageToBase64(image, callback) {
+    url = image.url;
+    try {
+        request({uri: url, encoding: 'binary'}, function(err, resp, body) {
+            if (resp.statusCode == 200) {
+                var type = resp.headers["content-type"]
+                ,   prefix = "data:" + type + ";base64,"
+                ,   base64 = new Buffer(body, 'binary').toString('base64')
+                ,   data = prefix + base64;
+                image.data = data;
+                callback(null, image);
+            } else {
+                console.log('err: '+ resp.statusCode);
+                console.log(body);
+                console.log(error);
+            }
+        });
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+
 //presentations rendered server side
 app.get('/:presentation', function(req, res, next) {
     for (i in base['presentations']) {
@@ -389,9 +434,28 @@ app.get('/:presentation', function(req, res, next) {
             if (resp.statusCode == 200) {
                 var slides = mdfilter.serverSide(body);
                 var $ = cheerio.load(slides);
-                base.meta.author = $('#firstp').text(); 
-                base.slides = slides;
-                res.render('slides-server', base);
+                base.meta.author = $('#firstp').text();
+              /*  imagesToArray(slides, imagesToBase64(images, function(imagesBase64) {
+                    console.log(imagesBase64);
+                }));*/
+                imagesToArray($, function(images) {
+                    imagesToBase64(images, function(imagesBase64) {
+                        // index images data by url
+                        indImages = {}
+                        for (var i in imagesBase64) {
+                            indImages[imagesBase64[i].url] = imagesBase64[i].data
+                        }
+                        // replace src url by data base64
+                        for (var i in $('img').get()) {
+                            var elt = $('img').get(i);
+                            var url = $(elt).attr('src');
+                            var data = indImages[url];
+                            $(elt).attr('src', data);
+                        }
+                        base.slides = $.html();
+                        res.render('slides-server', base);
+                    })
+                });
             } else {
                 console.log('err: '+ resp.statusCode);
                 console.log(body);
