@@ -90,7 +90,7 @@ body.deck-container {
     -webkit-box-shadow: 0px 0px 5px black;
 }
 
-.deck-container li code {
+.deck-container li code, .deck-container p code {
     color: #bf3c3c;
     font-size: 1.25em;
 }
