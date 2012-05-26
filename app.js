@@ -433,6 +433,9 @@ app.get('/:presentation', function(req, res, next) {
         request(url, function(err, resp, body) {
             if (resp.statusCode == 200) {
                 var slides = mdfilter.serverSide(body);
+                slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
+                //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
+                console.log(slides);
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
               /*  imagesToArray(slides, imagesToBase64(images, function(imagesBase64) {
@@ -452,7 +455,8 @@ app.get('/:presentation', function(req, res, next) {
                             var data = indImages[url];
                             $(elt).attr('src', data);
                         }
-                        base.slides = $.html();
+                        // BUG: Cheerio has some decoding bugs
+                        base.slides = $.html().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
                         res.render('slides-server', base);
                     })
                 });
