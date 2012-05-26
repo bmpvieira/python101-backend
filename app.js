@@ -433,13 +433,10 @@ app.get('/:presentation', function(req, res, next) {
         request(url, function(err, resp, body) {
             if (resp.statusCode == 200) {
                 var slides = mdfilter.serverSide(body);
-                slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
-                //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
-              /*  imagesToArray(slides, imagesToBase64(images, function(imagesBase64) {
-                    console.log(imagesBase64);
-                }));*/
+                //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
+                slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 imagesToArray($, function(images) {
                     imagesToBase64(images, function(imagesBase64) {
                         // index images data by url
