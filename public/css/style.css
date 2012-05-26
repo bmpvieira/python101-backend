@@ -77,17 +77,22 @@ body.deck-container {
 }
 
 .deck-container pre code {
-  	display: block; padding: .5em;
-  	background: transparent;
-  	font-size: 2.5em;
-	line-height:1;
+    display: block; padding: .5em;
+    background: transparent;
+    font-size: 2.5em;
+    line-height:1;
 }
 
 .deck-container .code {
-	font-family: 'Droid Sans Mono', monospace, sans-serif;
-	-moz-border-radius: 3px;
-	-moz-box-shadow: 0px 0px 5px black;
+    font-family: 'Droid Sans Mono', monospace, sans-serif;
+    -moz-border-radius: 3px;
+    -moz-box-shadow: 0px 0px 5px black;
     -webkit-box-shadow: 0px 0px 5px black;
+}
+
+.deck-container li code {
+    color: #bf3c3c;
+    font-size: 1.25em;
 }
 
 .deck-container .CodeMirror {

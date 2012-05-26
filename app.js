@@ -435,7 +435,6 @@ app.get('/:presentation', function(req, res, next) {
                 var slides = mdfilter.serverSide(body);
                 slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
-                console.log(slides);
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
               /*  imagesToArray(slides, imagesToBase64(images, function(imagesBase64) {
@@ -502,3 +501,4 @@ app.listen(port, function() {
 //TODO: Clean up drafts and reorganize logic
 //TODO: Find a good way to print slides
 //TODO: Fix spaces tabs polution from editor
+//TODO: Add Droid Serif font for print
