@@ -437,6 +437,7 @@ app.get('/:presentation', function(req, res, next) {
                 base.meta.author = $('#firstp').text();
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
                 slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
+                $ = cheerio.load(slides); //TODO: This is really ugly, should check what's happening
                 imagesToArray($, function(images) {
                     imagesToBase64(images, function(imagesBase64) {
                         // index images data by url
