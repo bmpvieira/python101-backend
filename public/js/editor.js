@@ -87,6 +87,9 @@ function editorInit(idnum) {
         } else if (lines[i].match(/.*\#forceoutput$/) != null) {
             editor.setOption("readOnly", "nocursor");
             editor.hideLine(i);
+            // Set class to locked to change CSS
+            var editorElt = $(editor.getWrapperElement())
+            editorElt.attr('class', editorElt.attr('class') + ' editorLocked');
             var output = document.getElementById("codeout"+editor.idnum);
             output.innerHTML = lines[i].replace(/\#forceoutput/, "");
         };
