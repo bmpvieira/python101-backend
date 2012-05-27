@@ -203,7 +203,7 @@ function renderNotebooksIndex(lines) {
         , filename_noext_websafe = filename_noext.replace(/[^a-z0-9_\-]/gi, '').toLowerCase()
         , filename_noext_websafe = filename_noext_websafe.replace(/20/gi, '_').replace(/3a/gi, '-') //HACK
         , notebook = {
-            name: filename_noext_websafe,
+            name: filename,
             url: lines[line]
         };
         notebooks.push(notebook);
