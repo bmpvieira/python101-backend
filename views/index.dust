@@ -3,16 +3,19 @@
 {<slides}
 
 <section class="slide" id="python101">
-  <h2>{title}</h2>
-  <h3>Presentations</h3>
-  {#presentations}
-    <a href="{name}">{name}</a><br />
-  {/presentations}
-  <h3>Exercises</h3>
-  <h5>please use right click and "Save Link As"</h5>
-  {#notebooks}
-    <a href="{url}" onClick="alert('Please use right mouse click and [Save Link As]'); return false">{name}</a><br />
-  {/notebooks}
+    <h2>{title}</h2>
+    <h3>Presentations</h3>
+    {#presentations}
+        <a href="{name}">{name}</a><br />
+    {/presentations}
+    {#archives}
+        <a href="{name}">{name}</a><br />
+    {/archives}
+    <h3>Exercises</h3>
+    <h5>please use right click and "Save Link As"</h5>
+    {#notebooks}
+        <a href="{url}" onClick="alert('Please use right mouse click and [Save Link As]'); return false">{name}</a><br />
+    {/notebooks}
 </section>
 
 {/slides}

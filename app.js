@@ -115,7 +115,8 @@ fs.readFile('public/img/cc.min.svg', 'utf8', function(err, str) {
 // Variables
 var ptturl = 'https://dl.dropbox.com/s/l7ix60eiaw8caww/urls.txt?dl=1'
 , pttpath = '../../../../run/media/bruno/Dropbox/Dropbox/documents/work/python101/urls.txt'
-, ipnburl = 'https://dl.dropbox.com/s/xdzzyfd53cqxv19/ipnburls.txt?dl=1';
+, ipnburl = 'https://dl.dropbox.com/s/xdzzyfd53cqxv19/ipnburls.txt?dl=1'
+, zipurl = 'https://dl.dropbox.com/s/f649fnmsd9pnfnj/zipurls.txt?dl=1';
 
 // Routes
 // index that lists presentations
@@ -149,11 +150,9 @@ app.get('/', function(req, res, next) {
             fs.readFile(pttpath, 'utf8', function(err, str) {
                 if (err) next(err);
                 base['presentations'] = renderPresentationsIndex(str.split('\n'));
-                res.render('index', base);
             });
         } else if (resp.statusCode == 200) {
             base['presentations'] = renderPresentationsIndex(body.split('\n'));
-            res.render('index', base);
         } else {
             console.log('err: '+ resp.statusCode);
             console.log(body);
@@ -165,16 +164,29 @@ app.get('/', function(req, res, next) {
             fs.readFile(pttpath, 'utf8', function(err, str) {
                 if (err) next(err);
                 base['notebooks'] = renderNotebooksIndex(str.split('\n'));
-                res.render('index', base);
             });
         } else if (resp.statusCode == 200) {
             base['notebooks'] = renderNotebooksIndex(body.split('\n'));
-            res.render('index', base);
         } else {
             console.log('err: '+ resp.statusCode);
             console.log(body);
             next(err);
         };
+    });
+    request(zipurl, function(err, resp, body) {
+        if (resp == undefined) {
+            fs.readFile(pttpath, 'utf8', function(err, str) {
+                if (err) next(err);
+                base['archives'] = renderArchivesIndex(str.split('\n'));
+            });
+        } else if (resp.statusCode == 200) {
+            base['archives'] = renderArchivesIndex(body.split('\n'));
+        } else {
+            console.log('err: '+ resp.statusCode);
+            console.log(body);
+            next(err);
+        };
+    res.render('index', base);
     });
 });
 
@@ -209,6 +221,23 @@ function renderNotebooksIndex(lines) {
         notebooks.push(notebook);
     };
     return notebooks;
+};
+
+function renderArchivesIndex(lines) {
+    var archives = [];
+    for (var line in lines) {
+        lines[line] = lines[line].replace(/^#.*/, ''); // Ignore commented lines
+        var filename = lines[line].replace(/^.*[\\\/]/, '')
+        , filename_noext = filename.replace(/(?:\.([^.]+))?$/, '\1')
+        , filename_noext_websafe = filename_noext.replace(/[^a-z0-9_\-]/gi, '').toLowerCase()
+        , filename_noext_websafe = filename_noext_websafe.replace(/20/gi, '_').replace(/3a/gi, '-') //HACK
+        , archive = {
+            name: filename,
+            url: lines[line]
+        };
+        archives.push(archive);
+    };
+    return archives;
 };
 
 // presentations rendered client side
