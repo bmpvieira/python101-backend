@@ -9,7 +9,7 @@
         <a href="{name}">{name}</a><br />
     {/presentations}
     {#archives}
-        <a href="{name}">{name}</a><br />
+        <a href="{url}">{name}</a><br />
     {/archives}
     <h3>Exercises</h3>
     <h5>please use right click and "Save Link As"</h5>
