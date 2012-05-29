@@ -461,12 +461,21 @@ app.get('/:presentation', function(req, res, next) {
     try {
         request(url, function(err, resp, body) {
             if (resp.statusCode == 200) {
+                //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
+                body = body.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 var slides = mdfilter.serverSide(body);
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
-                slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
-                $ = cheerio.load(slides); //TODO: This is really ugly, should check what's happening
+                //slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
+                //$ = cheerio.load(slides); //TODO: This is really ugly, should check what's happening
+                
+                // BUG: Escape convert <> to html to avoid Cheerio errors (must be undone later because of code blocks)
+                //$('code').each(function(i, v) {
+                //    $(this).text($(this).text().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'));
+                //});
+
+
                 imagesToArray($, function(images) {
                     imagesToBase64(images, function(imagesBase64) {
                         // index images data by url
@@ -482,7 +491,12 @@ app.get('/:presentation', function(req, res, next) {
                             $(elt).attr('src', data);
                         }
                         // BUG: Cheerio has some decoding bugs
-                        base.slides = $.html().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                        // BUG: Escape html to <> to show correctly in code blocks
+                        $('code').each(function(i, v) {
+                            $(this).text($(this).text().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+                        });
+                        //base.slides = $.html().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                        base.slides = $.html()
                         res.render('slides-server', base);
                     })
                 });
