@@ -462,7 +462,7 @@ app.get('/:presentation', function(req, res, next) {
         request(url, function(err, resp, body) {
             if (resp.statusCode == 200) {
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
-                body = body.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
+                body = body.replace(/&/g, 'myAmpersAnd').replace(/\<\=/g, 'myLessOrEqual').replace(/</g, 'myLesserThan').replace(/\>\=/g, 'myGreatherOrEqual').replace(/>/g, 'myGreatherThan'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 var slides = mdfilter.serverSide(body);
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
@@ -493,10 +493,14 @@ app.get('/:presentation', function(req, res, next) {
                         // BUG: Cheerio has some decoding bugs
                         // BUG: Escape html to <> to show correctly in code blocks
                         $('code').each(function(i, v) {
-                            $(this).text($(this).text().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+                            $(this).text($(this).text().replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>').replace(/myAmpersAnd/g, '&amp;'));
+                        });
+                        $('textarea').each(function(i, v) {
+                            $(this).text($(this).text().replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>').replace(/myAmpersAnd/g, '&amp;'));
                         });
                         //base.slides = $.html().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
                         base.slides = $.html()
+                        //console.log(base.slides)
                         res.render('slides-server', base);
                     })
                 });
