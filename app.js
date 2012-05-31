@@ -463,7 +463,7 @@ app.get('/:presentation', function(req, res, next) {
             if (resp.statusCode == 200) {
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
                 body = body.replace(/<>/g, 'myNotEqual')
-                body = body.replace(/\ \<\=\ /g, '\ myLessOrEqual\ ').replace(/\ <\ /g, '\ myLesserThan\ ').replace(/\ \>\=\ /g, '\ myGreatherOrEqual\ ').replace(/\ >\ /g, '\ myGreatherThan\ '); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
+                body = body.replace(/\ \<\=\ /g, '\ myLessOrEqual\ ').replace(/\ <\ /g, '\ myLesserThan\ ').replace(/\ \>\=\ /g, '\ myGreatherOrEqual\ ').replace(/<br \/>/g, 'myBreakLine').replace(/\ >\ /g, '\ myGreatherThan\ '); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 var slides = mdfilter.serverSide(body);
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
@@ -494,10 +494,10 @@ app.get('/:presentation', function(req, res, next) {
                         // BUG: Cheerio has some decoding bugs
                         // BUG: Escape html to <> to show correctly in code blocks
                         $('code').each(function(i, v) {
-                            $(this).text($(this).text().replace(/myNotEqual/g, '<>').replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>'));
+                            $(this).text($(this).text().replace(/myBreakLine/g, '<br />').replace(/myNotEqual/g, '<>').replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>'));
                         });
                         $('textarea').each(function(i, v) {
-                            $(this).text($(this).text().replace(/myNotEqual/g, '<>').replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>' ));
+                            $(this).text($(this).text().replace(/myBreakLine/g, '<br />').replace(/myNotEqual/g, '<>').replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>' ));
                         });
                         //base.slides = $.html().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
                         base.slides = $.html()

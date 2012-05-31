@@ -73,7 +73,7 @@ function editorInit(idnum) {
     // Set default highlight line
     editor.hlLine = editor.setLineClass(0, "activeline");
     // Replace slashes from escaped char or comments
-    var value = editor.getValue().replace(/\\/g, "");
+    var value = editor.getValue().replace(/\\\#/g, "");
     editor.setValue(value);
     // BUG workaround: CodeMirror2's python.js mode crashes with some first lines (like assigments), so mdfilter adds a hashbang that is hidden here.
     editor.hideLine(0);
