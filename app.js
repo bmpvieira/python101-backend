@@ -462,7 +462,8 @@ app.get('/:presentation', function(req, res, next) {
         request(url, function(err, resp, body) {
             if (resp.statusCode == 200) {
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
-                body = body.replace(/&/g, 'myAmpersAnd').replace(/\<\=/g, 'myLessOrEqual').replace(/</g, 'myLesserThan').replace(/\>\=/g, 'myGreatherOrEqual').replace(/>/g, 'myGreatherThan'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
+                body = body.replace(/<>/g, 'myNotEqual')
+                body = body.replace(/\ \<\=\ /g, '\ myLessOrEqual\ ').replace(/\ <\ /g, '\ myLesserThan\ ').replace(/\ \>\=\ /g, '\ myGreatherOrEqual\ ').replace(/\ >\ /g, '\ myGreatherThan\ '); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 var slides = mdfilter.serverSide(body);
                 var $ = cheerio.load(slides);
                 base.meta.author = $('#firstp').text();
@@ -493,10 +494,10 @@ app.get('/:presentation', function(req, res, next) {
                         // BUG: Cheerio has some decoding bugs
                         // BUG: Escape html to <> to show correctly in code blocks
                         $('code').each(function(i, v) {
-                            $(this).text($(this).text().replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>').replace(/myAmpersAnd/g, '&amp;'));
+                            $(this).text($(this).text().replace(/myNotEqual/g, '<>').replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>'));
                         });
                         $('textarea').each(function(i, v) {
-                            $(this).text($(this).text().replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>').replace(/myAmpersAnd/g, '&amp;'));
+                            $(this).text($(this).text().replace(/myNotEqual/g, '<>').replace(/myLessOrEqual/g, '<=').replace(/myGreatherOrEqual/g, '>=').replace(/myLesserThan/g, '<').replace(/myGreatherThan/g, '>' ));
                         });
                         //base.slides = $.html().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
                         base.slides = $.html()
