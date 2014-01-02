@@ -94,7 +94,7 @@ var base = {
       name: "Bruno Vieira",
       url: "http://bmpvieira.com"
     },
-    year: 2012,
+    year: "2012-2014",
     site_title: 'Python 101: for biologists, by biologists',
     title: 'Python 101',
     meta: {
@@ -283,8 +283,6 @@ function catTagFilesAsync(file, tag, callback) {
                     if (err) {
                         request(src, function(err, resp, body) {
                             if(resp.statusCode == 200) {
-                                console.log("ola");
-                                
                                 output += body;
                                 console.log(output);
                                 counter++;
@@ -419,11 +417,10 @@ function imagesToArray($, callback) {
     }
     callback(images)
 }
-    
 
 function imagesToBase64(images, callback) {
     async.mapSeries(images, imageToBase64, function(err, imagesBase64) {
-        callback(imagesBase64);  
+        callback(imagesBase64);
     });
 }
 
@@ -470,7 +467,6 @@ app.get('/:presentation', function(req, res, next) {
                 //TODO: Before Cheerio processing convert all <>& to html equiv, then reconvert to symbol for it to work in CodeMirror2"
                 //slides = slides.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'); //To avoid md, cheerio strange bug '<» Less="Less" than;="than;"'
                 //$ = cheerio.load(slides); //TODO: This is really ugly, should check what's happening
-                
                 // BUG: Escape convert <> to html to avoid Cheerio errors (must be undone later because of code blocks)
                 //$('code').each(function(i, v) {
                 //    $(this).text($(this).text().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;'));
@@ -516,7 +512,7 @@ app.get('/:presentation', function(req, res, next) {
             if (err) next(err);
             var slides = mdfilter.serverSide(str);
             var $ = cheerio.load(slides);
-            base.meta.author = $('#firstp').text(); 
+            base.meta.author = $('#firstp').text();
             base.slides = slides;
             res.render('slides-server', base);
         });
