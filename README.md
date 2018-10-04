@@ -1,13 +1,14 @@
 Python 101: for biologists, by biologists
 =========================================
-The code of this project is not yet public, please do not share.
-Some commits were made under pressure and/or lack of sleep (added to the fact that I knew Python but not Javascript), so some code might not make sense or needs some serious cleanup! (-_-;)
+
+Backend for course given in 2012 at the University of Lisbon.
+
+* [Slides example (day 2 of the course)](http://bmpvieira.com/py101) - Code examples are interactive, try to modify and shift-enter.
+* [Poster](https://photos.app.goo.gl/sVADvYv1KgeS3P4a7) - made in Inkscape
 
 Purpose
 -------
 Get markdown files from Dropbox and/or Github and render them to HTML5 presentations with interactive Python code examples.
-
-[Slides example](http://bmpvieira.com/py101)
 
 [Course repo](https://github.com/bmpvieira/python101)
 
